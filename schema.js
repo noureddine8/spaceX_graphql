@@ -40,6 +40,45 @@ const queryType = new graphql.GraphQLObjectType({
         }
       },
     },
+    launch: {
+      type: LaunchType,
+      args: { flight_number: { type: graphql.GraphQLInt } },
+      async resolve(_, args) {
+        try {
+          const res = await axios.get(
+            `https://api.spacexdata.com/v3/launches/${args.flight_number}`
+          );
+          return res.data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    },
+    rockets: {
+      type: new graphql.GraphQLList(RocketType),
+      async resolve(_, args) {
+        try {
+          const res = await axios.get("https://api.spacexdata.com/v3/rockets");
+          return res.data;
+        } catch (err) {
+          return console.log(err);
+        }
+      },
+    },
+    rocket: {
+      type: RocketType,
+      args: { rocket_id: { type: graphql.GraphQLString } },
+      async resolve(_, args) {
+        try {
+          const res = await axios.get(
+            `https://api.spacexdata.com/v3/rockets/${args.rocket_id}`
+          );
+          return res.data;
+        } catch (err) {
+          console.log(err);
+        }
+      },
+    },
   }),
 });
 export default new graphql.GraphQLSchema({ query: queryType });
